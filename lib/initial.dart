@@ -28,7 +28,6 @@ class FallbackMaterialLocalisationsDelegate
 }
 
 class InitialSetup extends StatefulWidget {
-
   final AppEnvironment environment;
 
   InitialSetup({@required this.environment}) {
@@ -44,7 +43,8 @@ class InitialSetupState extends State<InitialSetup>
   final store = Store<AppState>(
     appReducer,
     initialState: AppState.init(),
-    middleware: appMiddleware(),
+    // middleware: appMiddleware(), if you use middleware add function in
+    // this list and then you are ready to use
   );
 
   @override
@@ -70,16 +70,24 @@ class InitialSetupState extends State<InitialSetup>
         store: store,
         child: MaterialApp(
             localizationsDelegates: [
-              FlutterI18nDelegate(useCountryCode: false, fallbackFile: 'en'),
+              FlutterI18nDelegate(
+                  useCountryCode: false, path: 'assets/flutter_i18n'),
               GlobalMaterialLocalizations.delegate,
               GlobalWidgetsLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,
             ],
-            supportedLocales: <Locale>[Locale('en')],
+            supportedLocales: <Locale>[
+              Locale('en')
+            ],
             title: 'UpDay Task',
             debugShowCheckedModeBanner: false,
-            home: Container(
-              color: Colors.black12,
+            home: Scaffold(
+              appBar: AppBar(
+                title: Text('Hello'),
+              ),
+              body: Container(
+                color: Colors.black12,
+              ),
             ),
             theme: ThemeData(
               fontFamily: 'Lato',
