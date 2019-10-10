@@ -1,0 +1,147 @@
+analyzer:
+  strong-mode:
+    implicit-casts: true
+    implicit-dynamic: true
+  errors:
+    # treat missing required parameters as a warning (not a hint)
+    missing_required_param: warning
+    avoid_relative_lib_imports: warning
+    avoid_renaming_method_parameters: warning
+    avoid_as: warning
+    avoid_returning_null: warning
+    always_put_required_named_parameters_first: warning
+    empty_catches: warning
+    join_return_with_assignment: warning
+    overridden_fields: warning
+    parameter_assignments: warning
+    prefer_adjacent_string_concatenation: warning
+    prefer_collection_literals: warning
+    prefer_conditional_assignment: warning
+    prefer_expression_function_bodies: warning
+    prefer_foreach: warning
+    prefer_initializing_formals: warning
+    prefer_single_quotes: warning
+    # public_member_api_docs: warning
+    type_init_formals: warning
+    unnecessary_null_aware_assignments: warning
+    unnecessary_null_in_if_null_operators: warning
+    unnecessary_this: warning
+    use_setters_to_change_properties: warning
+    avoid_empty_else: error
+    empty_statements: error
+    unnecessary_statements: error
+    avoid_bool_literals_in_conditional_expressions: error
+    avoid_double_and_int_checks: error
+    avoid_function_literals_in_foreach_calls: error
+    avoid_init_to_null: error
+    avoid_null_checks_in_equality_operators: error
+    avoid_positional_boolean_parameters: error
+    avoid_return_types_on_setters: error
+    avoid_single_cascade_in_expression_statements: error
+    avoid_unused_constructor_parameters: error
+    avoid_void_async: error
+    await_only_futures: error
+    camel_case_types: error
+    constant_identifier_names: error
+    curly_braces_in_flow_control_structures: warning
+    directives_ordering: error
+    empty_constructor_bodies: error
+    flutter_style_todos: error # http://dart-lang.github.io/linter/lints/flutter_style_todos.html
+    library_prefixes: error
+    lines_longer_than_80_chars: warning
+    non_constant_identifier_names: error
+    only_throw_errors: error
+    prefer_contains: error
+    prefer_equal_for_default_values: error
+    prefer_final_fields: error
+    prefer_final_locals: error
+    prefer_interpolation_to_compose_strings: error
+    prefer_is_empty: error
+    prefer_is_not_empty: error
+    recursive_getters: error
+    slash_for_doc_comments: error
+    # type_annotate_public_apis: warning
+    unnecessary_brace_in_string_interps: error
+    unnecessary_getters_setters: error
+    unnecessary_lambdas: error
+    unnecessary_new: warning
+    # cascade_invocations: error
+    # always_specify_types: error
+    # file_names: error
+    # library_names
+
+linter:
+  rules:
+    # these rules are documented on and in the same order as
+    # the Dart Lint rules page to make maintenance easier
+    # https://github.com/dart-lang/linter/blob/master/example/all.yaml
+    - always_declare_return_types
+    # - always_specify_types
+    # - annotate_overrides
+    # - avoid_as
+    - avoid_empty_else
+    - avoid_relative_lib_imports
+    - empty_statements
+    - no_duplicate_case_values
+    - unnecessary_statements
+    - always_put_required_named_parameters_first
+    - avoid_as
+    - avoid_bool_literals_in_conditional_expressions
+    - avoid_double_and_int_checks
+    - avoid_function_literals_in_foreach_calls
+    - avoid_init_to_null
+    - avoid_null_checks_in_equality_operators
+    - avoid_positional_boolean_parameters
+    - avoid_renaming_method_parameters
+    - avoid_return_types_on_setters
+    - avoid_returning_null
+    - avoid_single_cascade_in_expression_statements
+    - avoid_unused_constructor_parameters
+    - avoid_void_async
+    - await_only_futures
+    - camel_case_types
+    - constant_identifier_names
+    - curly_braces_in_flow_control_structures
+    - directives_ordering
+    - empty_catches
+    - empty_constructor_bodies
+    - flutter_style_todos # http://dart-lang.github.io/linter/lints/flutter_style_todos.html
+    - join_return_with_assignment
+    - library_prefixes
+    - lines_longer_than_80_chars
+    - non_constant_identifier_names
+    - only_throw_errors # http://dart-lang.github.io/linter/lints/only_throw_errors.html
+    - overridden_fields
+    - parameter_assignments
+    - prefer_adjacent_string_concatenation
+    - prefer_collection_literals
+    - prefer_conditional_assignment
+    - prefer_const_declarations # http://dart-lang.github.io/linter/lints/prefer_const_declarations.html
+    - prefer_contains
+    - prefer_equal_for_default_values
+    - prefer_expression_function_bodies
+    - prefer_final_fields
+    - prefer_final_locals
+    - prefer_foreach
+    - prefer_initializing_formals
+    - prefer_interpolation_to_compose_strings
+    - prefer_is_empty
+    - prefer_is_not_empty
+    - prefer_single_quotes
+    # - public_member_api_docs
+    - recursive_getters
+    - slash_for_doc_comments
+    # - type_annotate_public_apis
+    - type_init_formals
+    - unnecessary_brace_in_string_interps
+    - unnecessary_getters_setters
+    - unnecessary_lambdas
+    - unnecessary_new
+    - unnecessary_null_aware_assignments
+    - unnecessary_null_in_if_null_operators
+    - unnecessary_this
+    - use_setters_to_change_properties
+    # - cascade_invocations
+    # - always_specify_types
+    # - file_names http://dart-lang.github.io/linter/lints/file_names.html
+    # - library_names http://dart-lang.github.io/linter/lints/library_names.html
