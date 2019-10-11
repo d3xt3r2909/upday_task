@@ -27,11 +27,8 @@ class GalleryWrapperModel {
             : [],
       );
 
-  static List<GalleryWrapperModel> parseGalleryWrapper(String responseBody) {
-    final parsed = json.decode(responseBody).cast<Map<String, dynamic>>();
-    return parsed
-        .map<GalleryWrapperModel>(
-            (json) => GalleryWrapperModel.fromJsonApi(json))
-        .toList();
+  static GalleryWrapperModel parseGalleryWrapper(String responseBody) {
+    final parsed = json.decode(responseBody);
+    return GalleryWrapperModel.fromJsonApi(parsed);
   }
 }

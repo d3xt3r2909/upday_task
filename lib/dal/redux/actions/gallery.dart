@@ -1,11 +1,16 @@
 import 'dart:async';
 
-import 'package:upday_task/dal/model/response/gallery_wrapper.dart';
+import 'package:upday_task/dal/model/response/gallery_item.dart';
 
-class GetAndUpdateGallery {
-  final GalleryWrapperModel images;
+class RequestGetGallery {
   final Completer completer;
 
-  GetAndUpdateGallery({this.images, Completer completer})
+  RequestGetGallery({Completer completer})
       : completer = completer ?? Completer();
+}
+
+class AddImagesAction {
+  final List<GalleryItemModel> images;
+
+  AddImagesAction(this.images);
 }

@@ -33,6 +33,8 @@ class AppHttpRequestHandler {
       uri = Uri.https(basePath, path, queryParameters);
 
       request = await httpClient.getUrl(uri);
+      request.headers.set(HttpHeaders.authorizationHeader,
+          'Basic ${base64Encode(utf8.encode('5af67-e0db5-44eb6-abf2e-3171a-94137:95ecb-1651e-c7698-3e36e-3c935-6361d'))}');
 
       final HttpClientResponse response = await request.close();
 

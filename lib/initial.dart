@@ -6,8 +6,10 @@ import 'package:flutter_i18n/flutter_i18n_delegate.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
+import 'package:upday_task/dal/redux/middleware/middleware.dart';
 import 'package:upday_task/dal/redux/models/app_state.dart';
 import 'package:upday_task/dal/redux/reducers/reducer.dart';
+import 'package:upday_task/pages/gallery/index.dart';
 import 'package:upday_task/settings/app_settings.dart';
 import 'package:upday_task/settings/dimensions.dart';
 
@@ -42,8 +44,7 @@ class InitialSetupState extends State<InitialSetup>
   final store = Store<AppState>(
     appReducer,
     initialState: AppState.init(),
-    // middleware: appMiddleware(), if you use middleware add function in
-    // this list and then you are ready to use
+     middleware: appMiddleware(),
   );
 
   @override
@@ -80,14 +81,7 @@ class InitialSetupState extends State<InitialSetup>
             ],
             title: 'UpDay Task',
             debugShowCheckedModeBanner: false,
-            home: Scaffold(
-              appBar: AppBar(
-                title: Text('Hello'),
-              ),
-              body: Container(
-                color: Colors.black12,
-              ),
-            ),
+            home: GalleryPage(),
             theme: ThemeData(
               fontFamily: 'Lato',
               brightness: Brightness.light,
