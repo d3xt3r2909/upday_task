@@ -11,6 +11,7 @@ import 'package:upday_task/dal/redux/models/app_state.dart';
 import 'package:upday_task/dal/redux/reducers/reducer.dart';
 import 'package:upday_task/pages/gallery/index.dart';
 import 'package:upday_task/settings/app_settings.dart';
+import 'package:upday_task/settings/colors.dart';
 import 'package:upday_task/settings/dimensions.dart';
 
 class FallbackMaterialLocalisationsDelegate
@@ -44,7 +45,7 @@ class InitialSetupState extends State<InitialSetup>
   final store = Store<AppState>(
     appReducer,
     initialState: AppState.init(),
-     middleware: appMiddleware(),
+    middleware: appMiddleware(),
   );
 
   @override
@@ -54,47 +55,49 @@ class InitialSetupState extends State<InitialSetup>
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Notification bar change color
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
+      statusBarColor: AppColors.primaryDark,
+    ));
+  }
+
+  @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
   @override
-  Widget build(BuildContext context) {
-    // Notification bar change color
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
-      statusBarColor: Colors.white,
-    ));
-
-    return StoreProvider(
+  Widget build(BuildContext context) => StoreProvider(
         store: store,
         child: MaterialApp(
-            localizationsDelegates: [
-              FlutterI18nDelegate(
-                  useCountryCode: false, path: 'assets/flutter_i18n'),
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
-            supportedLocales: <Locale>[
-              Locale('en')
-            ],
-            title: 'UpDay Task',
-            debugShowCheckedModeBanner: false,
-            home: GalleryPage(),
-            theme: ThemeData(
-              fontFamily: 'Lato',
-              brightness: Brightness.light,
-              primaryColor: Colors.white,
-              primarySwatch: Colors.blue,
-              primaryColorDark: Colors.grey[200],
-              accentColor: Colors.red,
-              iconTheme: IconThemeData(size: AppDimensions.iconSize),
-              cursorColor: Theme.of(context).accentColor,
-            ),
-            // disable OS level text scaling
-            builder: (context, child) => MediaQuery(
-                child: child,
-                data: MediaQuery.of(context).copyWith(textScaleFactor: 1))));
-  }
+          localizationsDelegates: [
+            FlutterI18nDelegate(
+                useCountryCode: false, path: 'assets/flutter_i18n'),
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: <Locale>[Locale('en')],
+          title: 'UpDay Task',
+          debugShowCheckedModeBanner: false,
+          home: GalleryPage(),
+          theme: ThemeData(
+            fontFamily: 'Lato',
+            brightness: Brightness.dark,
+            primaryColor: AppColors.primary,
+            primaryColorDark: AppColors.primaryDark,
+            accentColor: AppColors.accent,
+            iconTheme: IconThemeData(size: AppDimensions.iconSize),
+            cursorColor: Theme.of(context).accentColor,
+          ),
+          // disable OS level text scaling
+          builder: (context, child) => MediaQuery(
+            child: child,
+            data: MediaQuery.of(context).copyWith(textScaleFactor: 1),
+          ),
+        ),
+      );
 }

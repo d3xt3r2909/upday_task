@@ -14,8 +14,8 @@ Middleware<AppState> middlewareGallery() =>
           final AppHttpRequestHandler httpClient = AppHttpRequestHandler();
 
           final Map<String, String> queryParameters = {
-            'per_page': '200',
-            'page': '1',
+            'per_page': action.getPerPageInString,
+            'page': action.getPageInString,
           };
 
           final HttpResponseWrapper responseServer = await httpClient.getHttp(
