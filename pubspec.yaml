@@ -28,7 +28,7 @@ flutter:
   assets:
     - assets/flutter_i18n/
     - assets/images/upday_logo.png
-    - assets/images/upday_text.png
+    - assets/images/shutter_stock.png
 
   fonts:
     - family: Lato

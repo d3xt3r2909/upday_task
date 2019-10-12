@@ -53,7 +53,7 @@ class _GalleryPageState extends State<GalleryPage> {
         builder: (context, AppState model) => Scaffold(
           key: _scaffoldKey,
           appBar: AppBar(
-            title: Image.asset('assets/images/upday_text.png', height: 24,),
+            title: Image.asset('assets/images/shutter_stock.png', height: 250,),
           ),
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerDocked,
