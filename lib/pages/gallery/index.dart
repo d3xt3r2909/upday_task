@@ -92,39 +92,45 @@ class _GalleryPageState extends State<GalleryPage> {
       );
 
   /// Build body of the page
-  Widget _buildBody(AppState state) => AnimatedSwitcher(
-        duration: const Duration(seconds: 1),
-        child: _galleryBlock.showLoaderList
-            ? JourneyShimmerList()
-            : StreamBuilder(
-                stream: _galleryBlock.outItem,
-                initialData: false,
-                builder: (BuildContext context, AsyncSnapshot<bool> snapshot) =>
-                    Container(
-                  color: Theme.of(context).primaryColorLight,
-                  child: GridView.builder(
-                    controller: _scrollController,
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                    ),
-                    key: Key('listview_trip'),
-                    itemCount: state.images.length,
-                    physics: AlwaysScrollableScrollPhysics(),
-                    itemBuilder: ((BuildContext context, int index) {
-                      _galleryBlock.itemEventSink.add(ItemEvent(index: index));
+  Widget _buildBody(AppState state) => OrientationBuilder(
+        builder: (BuildContext context, Orientation orientation) =>
+            AnimatedSwitcher(
+          duration: const Duration(seconds: 1),
+          child: _galleryBlock.showLoaderList
+              ? JourneyShimmerList(orientation)
+              : StreamBuilder(
+                  stream: _galleryBlock.outItem,
+                  initialData: false,
+                  builder:
+                      (BuildContext context, AsyncSnapshot<bool> snapshot) =>
+                          Container(
+                    color: Theme.of(context).primaryColorLight,
+                    child: GridView.builder(
+                      controller: _scrollController,
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount:
+                            orientation == Orientation.portrait ? 2 : 3,
+                      ),
+                      key: Key('listview_trip'),
+                      itemCount: state.images.length,
+                      physics: AlwaysScrollableScrollPhysics(),
+                      itemBuilder: ((BuildContext context, int index) {
+                        _galleryBlock.itemEventSink
+                            .add(ItemEvent(index: index));
 
-                      // Show loading 2 additional loading item buttons
-                      // otherwise show normal item with image in it
-                      if (snapshot.data) {
-                        return Card(child: GalleryShimmerItem());
-                      } else {
-                        return GalleryItemList(
-                          imageUrl: state.images[index].assets['preview'].url,
-                        );
-                      }
-                    }),
+                        // Show loading 2 additional loading item buttons
+                        // otherwise show normal item with image in it
+                        if (snapshot.data) {
+                          return Card(child: GalleryShimmerItem());
+                        } else {
+                          return GalleryItemList(
+                            imageUrl: state.images[index].assets['preview'].url,
+                          );
+                        }
+                      }),
+                    ),
                   ),
                 ),
-              ),
+        ),
       );
 }
