@@ -18,6 +18,7 @@ dependencies:
   flutter_i18n: ^0.7.0
   intl: ^0.15.7
   shimmer: ^1.0.1
+  rxdart: ^0.22.2
 
 dev_dependencies:
   flutter_test:
