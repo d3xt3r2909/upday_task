@@ -4,12 +4,14 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:upday_task/dal/redux/models/app_state.dart';
 import 'package:redux/redux.dart';
 import 'package:upday_task/pages/gallery/view_model/gallery.dart';
+import 'package:upday_task/pages/gallery/widgets/item_list.dart';
 import 'package:upday_task/pages/gallery/widgets/shimmer_grid.dart';
 import 'package:upday_task/pages/gallery/widgets/shimmer_item.dart';
 import 'package:upday_task/settings/colors.dart';
+import 'package:upday_task/settings/dimensions.dart';
 
-/// Page which is showing gallery of images downloaded from shutter stock API
-/// service
+/// Simple page which is showing gallery of images downloaded from shutter
+/// stock API service
 class GalleryPage extends StatefulWidget {
   GalleryPage();
 
@@ -19,6 +21,8 @@ class GalleryPage extends StatefulWidget {
 
 class _GalleryPageState extends State<GalleryPage> {
   final ScrollController _scrollController = ScrollController();
+
+  // State of this page
   GalleryBlock _galleryBlock;
 
   @override
@@ -32,9 +36,11 @@ class _GalleryPageState extends State<GalleryPage> {
   @override
   Widget build(BuildContext context) => StoreConnector(
         onInit: (Store<AppState> store) {
+          // Initialize business layer with current store
           _galleryBlock = GalleryBlock(
             store: store,
           );
+          // Catch data on init method
           _galleryBlock.itemEventSink.add(ItemEvent(index: 0, isInitial: true));
         },
         converter: (Store<AppState> store) => store.state,
@@ -46,7 +52,7 @@ class _GalleryPageState extends State<GalleryPage> {
             appBar: AppBar(
               title: Image.asset(
                 'assets/images/shutter_stock.png',
-                height: 250,
+                height: AppDimensions.appBarSize,
               ),
             ),
             floatingActionButtonLocation:
@@ -107,23 +113,13 @@ class _GalleryPageState extends State<GalleryPage> {
                     itemBuilder: ((BuildContext context, int index) {
                       _galleryBlock.itemEventSink.add(ItemEvent(index: index));
 
+                      // Show loading 2 additional loading item buttons
+                      // otherwise show normal item with image in it
                       if (snapshot.data) {
                         return Card(child: GalleryShimmerItem());
                       } else {
-                        return Card(
-                          color: Theme.of(context).primaryColor,
-                          child: Padding(
-                            padding: EdgeInsets.all(2),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(4),
-                              child: FadeInImage.assetNetwork(
-                                placeholder: 'assets/images/upday_logo.png',
-                                image:
-                                    state.images[index].assets['preview'].url,
-                                fit: BoxFit.fill,
-                              ),
-                            ),
-                          ),
+                        return GalleryItemList(
+                          imageUrl: state.images[index].assets['preview'].url,
                         );
                       }
                     }),
