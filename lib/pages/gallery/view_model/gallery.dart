@@ -11,7 +11,9 @@ import 'package:redux/redux.dart';
 /// responsible for business logic of gallery page
 /// It is made because of separating UI from technical logic
 class GalleryBlock implements BaseBloc {
-  int galleryLength, _currentIndex = 0, _visitedIndex = 0, _pageNumber = 1;
+  int galleryLength, _visitedIndex = 0, _pageNumber = 1;
+  @visibleForTesting
+  int currentIndex = 0;
   Store<AppState> store;
 
   // Bottom bar visibility
@@ -20,9 +22,9 @@ class GalleryBlock implements BaseBloc {
   // region bottom bar controller & sink and stream
   StreamSink<bool> get _inBottomBarVisibility => _bbController.sink;
   final _bottomBarScrollController = StreamController<ScrollDirection>();
-  final _bottomBarVisibilityController = StreamController<bool>();
 
   Stream<bool> get outBottomBarVisibility => _bbController.stream;
+  final _bottomBarVisibilityController = StreamController<bool>();
 
   Sink<bool> get bbVisibilitySink => _bottomBarVisibilityController.sink;
 
@@ -43,12 +45,21 @@ class GalleryBlock implements BaseBloc {
 
   // endregion
 
+  // region error handler controller & sink & stream
+  final _errorController = StreamController<String>();
+
+  StreamSink<String> get _inErrorHandler => _errorController.sink;
+
+  Stream<String> get outErrorHandler => _errorController.stream;
+
+  // endregion
+
   // Is there need to show list witch represents loader of images
   bool get showLoaderList =>
       store?.state?.images?.length == null || store.state.images.isEmpty;
 
   GalleryBlock({@required this.store}) {
-    galleryLength = store.state.images?.length ?? 0;
+    galleryLength = store?.state?.images?.length ?? 0;
     _itemEventController.stream.listen(_itemEventToState);
     _bottomBarVisibilityController.stream.listen(_bbVisibilityEventToState);
     _bottomBarScrollController.stream.listen(_bbScrollEventToState);
@@ -66,7 +77,7 @@ class GalleryBlock implements BaseBloc {
   /// This event will control visibility of bottom bar based on
   /// [scrollDirection] or index of list
   void _bbScrollEventToState(ScrollDirection scrollDirection) {
-    if (scrollDirection == ScrollDirection.reverse && _currentIndex != 0) {
+    if (scrollDirection == ScrollDirection.reverse && currentIndex != 0) {
       bbVisibilitySink.add(true);
     } else {
       bbVisibilitySink.add(false);
@@ -86,16 +97,15 @@ class GalleryBlock implements BaseBloc {
   void _itemEventToState(ItemEvent event) {
     bool isLoading = false;
     galleryLength = store?.state?.images?.length ?? 0;
-    _currentIndex = event.index;
+    currentIndex = event.index;
 
     // On every 15 element (index) of grid, call API and fill up with additional
     // data in redux, after that build method in UI will be again rebuild
     // because state of redux has been changed
-    if (galleryLength - 1 - event.index == 15 && galleryLength > 29 ||
-        event.isInitial) {
+    if (shouldLoadNewData(event.index, isInitialLoad: event.isInitial)) {
       isLoading = true;
       try {
-        _getData(store: store, page: _pageNumber).then((value) {
+        getData(store: store, page: _pageNumber).then((value) {
           isLoading = false;
         });
 
@@ -114,19 +124,30 @@ class GalleryBlock implements BaseBloc {
     _inItem.add(isLoading && (galleryLength - event.index <= 2));
   }
 
+  /// On every 14th (read from [currentIndex]) element data needs to be load
+  /// Except if [isInitialLoad] is set to true - case for first items in list
+  /// Except if [galleryLength] is not large enough - less than 29 elements
+  @visibleForTesting
+  bool shouldLoadNewData(int currentIndex, {bool isInitialLoad = false}) =>
+      galleryLength - 1 - currentIndex == 15 && galleryLength > 29 ||
+      isInitialLoad;
+
   /// Method will call API point from Redux middleware for downloading data with
   /// images, where [page] represents from what point of data from DB should
   /// this API catch, while [page] parameter is responsible for defining number
   /// of images per one API call
   /// [store] is parameter which is instance of Redux store
-  Future<void> _getData(
+  @visibleForTesting
+  Future<void> getData(
       {@required Store<AppState> store,
       @required int page,
       int perPage = 30}) async {
     final galleryAction = RequestGetGallery(page, perPage);
     store.dispatch(galleryAction);
 
-    await galleryAction.completer.future;
+    await galleryAction.completer.future.catchError((e) {
+      _inErrorHandler.add('error_code_went_wrong');
+    });
   }
 }
 

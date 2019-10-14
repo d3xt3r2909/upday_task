@@ -30,6 +30,7 @@ flutter:
     - assets/flutter_i18n/
     - assets/images/upday_logo.png
     - assets/images/shutter_stock.png
+    - test_resources/gallery_data_dummy.json
 
   fonts:
     - family: Lato

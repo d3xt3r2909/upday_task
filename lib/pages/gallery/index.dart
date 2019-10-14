@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:upday_task/dal/redux/models/app_state.dart';
 import 'package:redux/redux.dart';
 import 'package:upday_task/pages/gallery/view_model/gallery.dart';
@@ -20,7 +21,9 @@ class GalleryPage extends StatefulWidget {
 }
 
 class _GalleryPageState extends State<GalleryPage> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final ScrollController _scrollController = ScrollController();
+  Observable observable;
 
   // State of this page
   GalleryBlock _galleryBlock;
@@ -40,6 +43,25 @@ class _GalleryPageState extends State<GalleryPage> {
           _galleryBlock = GalleryBlock(
             store: store,
           );
+
+          observable = Observable(_galleryBlock.outErrorHandler);
+
+          observable.listen((something) {
+            _scaffoldKey.currentState.showSnackBar(
+              SnackBar(
+                content: Text('something went wrong'),
+                duration: Duration(days: 1),
+                action: SnackBarAction(
+                  label: 'TRY',
+                  onPressed: () {
+                    _galleryBlock.itemEventSink
+                        .add(ItemEvent(index: 0, isInitial: true));
+                  },
+                ),
+              ),
+            );
+          });
+
           // Catch data on init method
           _galleryBlock.itemEventSink.add(ItemEvent(index: 0, isInitial: true));
         },
@@ -49,6 +71,7 @@ class _GalleryPageState extends State<GalleryPage> {
           initialData: false,
           builder: (BuildContext context, AsyncSnapshot<bool> showBottomBar) =>
               Scaffold(
+            key: _scaffoldKey,
             appBar: AppBar(
               title: Image.asset(
                 'assets/images/shutter_stock.png',

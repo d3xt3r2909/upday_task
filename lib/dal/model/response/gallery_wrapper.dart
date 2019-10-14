@@ -19,7 +19,6 @@ class GalleryWrapperModel {
         imagePerPage: json['per_page'],
         imageTotal: json['total_count'],
         images: (json['data'] != null && '${json['data']}' != '[]')
-//            ? json['trips'].parseJsonListToObjectList
             // ignore: avoid_as
             ? (json['data'] as List)
                 .map((i) => GalleryItemModel.fromJsonApi(i))

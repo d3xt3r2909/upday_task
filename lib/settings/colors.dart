@@ -9,5 +9,6 @@ class AppColors {
 
   static const galleryTopButton = const Color(0xFF80000000);
   static const galleryShimmer = const Color(0xFF80000000);
+  static const bgDialog = const Color(0xFF400000000);
 
 }
