@@ -5,9 +5,9 @@ import 'package:rxdart/rxdart.dart';
 import 'package:upday_task/dal/redux/models/app_state.dart';
 import 'package:redux/redux.dart';
 import 'package:upday_task/pages/gallery/view_model/gallery.dart';
-import 'package:upday_task/pages/gallery/widgets/item_list.dart';
+import 'package:upday_task/pages/gallery/widgets/visibility_widget.dart';
+import 'package:upday_task/pages/gallery/widgets/item_list_picker.dart';
 import 'package:upday_task/pages/gallery/widgets/shimmer_grid.dart';
-import 'package:upday_task/pages/gallery/widgets/shimmer_item.dart';
 import 'package:upday_task/settings/colors.dart';
 import 'package:upday_task/settings/dimensions.dart';
 
@@ -81,34 +81,36 @@ class _GalleryPageState extends State<GalleryPage> {
             floatingActionButtonLocation:
                 FloatingActionButtonLocation.centerDocked,
             // We can use visibility widget but it can be expensive-performance
-            floatingActionButton: showBottomBar.data
-                ? FloatingActionButton(
-                    backgroundColor: AppColors.primaryLight,
-                    child: const Icon(
-                      Icons.arrow_upward,
-                      color: Colors.white,
-                    ),
-                    onPressed: () {
-                      _scrollController
-                          .animateTo(0,
-                              duration: Duration(milliseconds: 500),
-                              curve: Curves.easeInCubic)
-                          .then(
-                            (value) =>
-                                _galleryBlock.bbVisibilitySink.add(false),
-                          );
-                    },
-                  )
-                : null,
-            bottomNavigationBar: showBottomBar.data
-                ? BottomAppBar(
-                    shape: CircularNotchedRectangle(),
-                    notchMargin: 4.0,
-                    child: SizedBox(
-                      height: 35,
-                    ),
-                  )
-                : null,
+            floatingActionButton: VisibilityWidget(
+              child: FloatingActionButton(
+                backgroundColor: AppColors.primaryLight,
+                child: const Icon(
+                  Icons.arrow_upward,
+                  color: Colors.white,
+                ),
+                onPressed: () {
+                  _scrollController
+                      .animateTo(0,
+                      duration: Duration(milliseconds: 500),
+                      curve: Curves.easeInCubic)
+                      .then(
+                        (value) =>
+                        _galleryBlock.bbVisibilitySink.add(false),
+                  );
+                },
+              ),
+              isVisible: showBottomBar.data,
+            ),
+            bottomNavigationBar: VisibilityWidget(
+              child: BottomAppBar(
+                shape: CircularNotchedRectangle(),
+                notchMargin: 4.0,
+                child: SizedBox(
+                  height: 35,
+                ),
+              ),
+              isVisible: showBottomBar.data,
+            ),
             body: _buildBody(model),
           ),
         ),
@@ -120,7 +122,7 @@ class _GalleryPageState extends State<GalleryPage> {
             AnimatedSwitcher(
           duration: const Duration(seconds: 1),
           child: _galleryBlock.showLoaderList
-              ? JourneyShimmerList(orientation)
+              ? GalleryShimmerList(orientation)
               : StreamBuilder(
                   stream: _galleryBlock.outItem,
                   initialData: false,
@@ -141,19 +143,16 @@ class _GalleryPageState extends State<GalleryPage> {
                         _galleryBlock.itemEventSink
                             .add(ItemEvent(index: index));
 
-                        // Show loading 2 additional loading item buttons
-                        // otherwise show normal item with image in it
-                        if (snapshot.data) {
-                          return Card(child: GalleryShimmerItem());
-                        } else {
-                          return GalleryItemList(
-                            imageUrl: state.images[index].assets['preview'].url,
-                          );
-                        }
+                        return GalleryItemPicker(
+                            showLoadingItem: snapshot.data,
+                            imageUrl:
+                                state.images[index].assets['preview'].url);
                       }),
                     ),
                   ),
                 ),
         ),
       );
+
+
 }

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class GalleryItemList extends StatelessWidget {
   final String imageUrl;
 
-  GalleryItemList({this.imageUrl});
+  GalleryItemList({@required this.imageUrl});
 
   @override
   Widget build(BuildContext context) => Card(

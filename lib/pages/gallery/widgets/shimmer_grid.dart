@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:upday_task/pages/gallery/widgets/shimmer_item.dart';
 
-class JourneyShimmerList extends StatelessWidget {
+class GalleryShimmerList extends StatelessWidget {
 
   final Orientation orientation;
 
-  JourneyShimmerList(this.orientation);
+  GalleryShimmerList(this.orientation);
 
   @override
   Widget build(BuildContext context) => GridView.builder(
