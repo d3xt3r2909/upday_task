@@ -25,6 +25,9 @@ dev_dependencies:
     sdk: flutter
   mockito: ^4.1.1
   transparent_image: ^1.0.0
+  flutter_driver:
+    sdk: flutter
+  test: any
 
 flutter:
   uses-material-design: true

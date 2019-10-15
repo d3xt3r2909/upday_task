@@ -83,6 +83,7 @@ class _GalleryPageState extends State<GalleryPage> {
             // We can use visibility widget but it can be expensive-performance
             floatingActionButton: VisibilityWidget(
               child: FloatingActionButton(
+                key: Key('gallery_top_floating_button'),
                 backgroundColor: AppColors.primaryLight,
                 child: const Icon(
                   Icons.arrow_upward,
@@ -136,7 +137,7 @@ class _GalleryPageState extends State<GalleryPage> {
                         crossAxisCount:
                             orientation == Orientation.portrait ? 2 : 3,
                       ),
-                      key: Key('listview_trip'),
+                      key: Key('gallery_grid_key'),
                       itemCount: state.images.length,
                       physics: AlwaysScrollableScrollPhysics(),
                       itemBuilder: ((BuildContext context, int index) {
