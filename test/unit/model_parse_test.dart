@@ -4,8 +4,8 @@ import 'package:upday_task/dal/model/response/gallery_wrapper.dart';
 
 void main() {
   test(
-      'Parsing data trough the model, this insure that API response '
-          'structure is not changed', () async {
+      'Parsing data trough the model (JSON data), this insure that API '
+          'response structure is not changed', () async {
     final file = File('../test_resources/gallery_data_dummy.json');
 
     final GalleryWrapperModel galleryObject =
