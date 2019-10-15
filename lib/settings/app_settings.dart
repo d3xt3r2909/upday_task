@@ -1,5 +1,8 @@
 // ignore_for_file: constant_identifier_names
 class AppSettings {
+  static const String API_BASE_URI = 'api.shutterstock.com';
+  static const API_TIMEOUT_TIME = 10;
+
   static AppEnvironment currentEnvironment;
 
   /// Setup different environment for the app
