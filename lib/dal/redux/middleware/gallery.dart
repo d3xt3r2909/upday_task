@@ -25,7 +25,6 @@ Middleware<AppState> middlewareGallery() =>
           final GalleryWrapperModel responseGallery =
           GalleryWrapperModel.parseGalleryWrapper(responseServer.body);
 
-          // @TODO(Nihad): We need to better parse this
           // check is there images
           store.dispatch(AddImagesAction(responseGallery.images));
           action.completer.complete('Data from API has been added to store');
