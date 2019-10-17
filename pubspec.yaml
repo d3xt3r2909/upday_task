@@ -1,7 +1,7 @@
-name: upday_task
-description: Upday Task Project
+name: shutterstock_flutter
+description: Flutter app for infinitive scroll of shutterstock images
 
-version: 0.0.1+0
+version: 1.0.0+0
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
@@ -19,6 +19,15 @@ dependencies:
   intl: ^0.15.7
   shimmer: ^1.0.1
   rxdart: ^0.22.2
+  flutter_launcher_icons: ^0.7.3
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path_android: "assets/shutterstock_luncher_icon.png"
+  image_path_ios: "assets/shutterstock_luncher_icon.png"
+  adaptive_icon_background: "assets/shutterstock_luncher_icon_bg.png"
+  adaptive_icon_foreground: "assets/shutterstock_luncher_icon.png"
 
 dev_dependencies:
   flutter_test:
@@ -35,6 +44,8 @@ flutter:
     - assets/flutter_i18n/
     - assets/images/upday_logo.png
     - assets/images/shutter_stock.png
+    - assets/shutterstock_luncher_icon.png
+    - assets/shutterstock_luncher_icon_bg.png
     - test_resources/gallery_data_dummy.json
 
   fonts:

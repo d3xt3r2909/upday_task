@@ -1,5 +1,5 @@
 import 'package:flutter_driver/driver_extension.dart';
-import 'package:upday_task/main.dart' as app;
+import 'package:shutterstock_flutter/main.dart' as app;
 
 void main() {
   // This line enables the extension

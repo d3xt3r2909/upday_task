@@ -2,8 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:upday_task/dal/model/response/http_response_wrapper.dart';
-import 'package:upday_task/settings/app_settings.dart';
+import 'package:shutterstock_flutter/dal/model/response/http_response_wrapper.dart';
+import 'package:shutterstock_flutter/settings/app_settings.dart';
+
 
 /// This class is SINGLETON, it is handling logic for CRUD operations
 /// After you create instance of it, please SETUP which module do you want

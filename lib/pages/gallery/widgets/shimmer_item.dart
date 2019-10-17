@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:upday_task/settings/colors.dart';
+import 'package:shutterstock_flutter/settings/colors.dart';
 
 class GalleryShimmerItem extends StatelessWidget {
   @override

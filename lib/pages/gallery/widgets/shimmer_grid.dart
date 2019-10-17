@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:upday_task/pages/gallery/widgets/shimmer_item.dart';
+import 'package:shutterstock_flutter/pages/gallery/widgets/shimmer_item.dart';
 
 class GalleryShimmerList extends StatelessWidget {
 

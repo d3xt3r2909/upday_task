@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:upday_task/dal/model/response/gallery_item.dart';
+import 'package:shutterstock_flutter/dal/model/response/gallery_item.dart';
 
 /// Model class for gallery response
 class GalleryWrapperModel {

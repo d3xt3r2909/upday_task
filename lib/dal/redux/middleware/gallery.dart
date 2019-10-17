@@ -1,10 +1,10 @@
 import 'package:redux/redux.dart';
-import 'package:upday_task/dal/helper/http_request_handler.dart';
-import 'package:upday_task/dal/helper/path.dart';
-import 'package:upday_task/dal/model/response/gallery_wrapper.dart';
-import 'package:upday_task/dal/model/response/http_response_wrapper.dart';
-import 'package:upday_task/dal/redux/actions/gallery.dart';
-import 'package:upday_task/dal/redux/models/app_state.dart';
+import 'package:shutterstock_flutter/dal/helper/http_request_handler.dart';
+import 'package:shutterstock_flutter/dal/helper/path.dart';
+import 'package:shutterstock_flutter/dal/model/response/gallery_wrapper.dart';
+import 'package:shutterstock_flutter/dal/model/response/http_response_wrapper.dart';
+import 'package:shutterstock_flutter/dal/redux/actions/gallery.dart';
+import 'package:shutterstock_flutter/dal/redux/models/app_state.dart';
 
 Middleware<AppState> middlewareGallery() =>
         (Store<AppState> store, action, NextDispatcher next) async {

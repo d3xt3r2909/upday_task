@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:transparent_image/transparent_image.dart';
-import 'package:upday_task/pages/gallery/widgets/item_list_picker.dart';
+import 'package:shutterstock_flutter/pages/gallery/widgets/item_list_picker.dart';
 
 void main() {
   group(('Test widget which needs to be place on one item of the list'), () {

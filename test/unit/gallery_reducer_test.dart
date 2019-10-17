@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:upday_task/dal/model/response/gallery_item.dart';
-import 'package:upday_task/dal/redux/actions/gallery.dart';
-import 'package:upday_task/dal/redux/reducers/gallery.dart';
+import 'package:shutterstock_flutter/dal/model/response/gallery_item.dart';
+import 'package:shutterstock_flutter/dal/redux/actions/gallery.dart';
+import 'package:shutterstock_flutter/dal/redux/reducers/gallery.dart';
 
 void main() {
   final List<GalleryItemModel> sourceImages = [

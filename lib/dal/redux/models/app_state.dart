@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:upday_task/dal/model/response/gallery_item.dart';
+import 'package:shutterstock_flutter/dal/model/response/gallery_item.dart';
 
 @immutable
 class AppState {

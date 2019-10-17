@@ -3,14 +3,14 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:upday_task/dal/redux/models/app_state.dart';
+import 'package:shutterstock_flutter/dal/redux/models/app_state.dart';
 import 'package:redux/redux.dart';
-import 'package:upday_task/pages/gallery/view_model/gallery.dart';
-import 'package:upday_task/pages/gallery/widgets/visibility_widget.dart';
-import 'package:upday_task/pages/gallery/widgets/item_list_picker.dart';
-import 'package:upday_task/pages/gallery/widgets/shimmer_grid.dart';
-import 'package:upday_task/settings/colors.dart';
-import 'package:upday_task/settings/dimensions.dart';
+import 'package:shutterstock_flutter/pages/gallery/view_model/gallery.dart';
+import 'package:shutterstock_flutter/pages/gallery/widgets/visibility_widget.dart';
+import 'package:shutterstock_flutter/pages/gallery/widgets/item_list_picker.dart';
+import 'package:shutterstock_flutter/pages/gallery/widgets/shimmer_grid.dart';
+import 'package:shutterstock_flutter/settings/colors.dart';
+import 'package:shutterstock_flutter/settings/dimensions.dart';
 
 /// Simple page which is showing gallery of images downloaded from shutter
 /// stock API service
