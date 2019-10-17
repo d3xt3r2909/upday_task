@@ -1,6 +1,6 @@
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:upday_task/pages/gallery/view_model/gallery.dart';
+import 'package:shutterstock_flutter/pages/gallery/view_model/gallery.dart';
 
 /// This file contains unit test for class [GalleryBlock] - business logic
 /// for this application

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:upday_task/pages/gallery/widgets/item_list.dart';
-import 'package:upday_task/pages/gallery/widgets/shimmer_item.dart';
+import 'package:shutterstock_flutter/pages/gallery/widgets/item_list.dart';
+import 'package:shutterstock_flutter/pages/gallery/widgets/shimmer_item.dart';
 
 /// Based on parameter [showLoading] we need to decide should we show items
 /// that represents loading of images or real item

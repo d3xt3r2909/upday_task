@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:upday_task/dal/model/response/gallery_wrapper.dart';
+import 'package:shutterstock_flutter/dal/model/response/gallery_wrapper.dart';
 
 void main() {
   test(

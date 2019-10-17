@@ -4,10 +4,10 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:upday_task/dal/model/response/gallery_item.dart';
-import 'package:upday_task/dal/redux/actions/gallery.dart';
-import 'package:upday_task/dal/redux/models/app_state.dart';
-import 'package:upday_task/pages/gallery/view_model/base_bloc.dart';
+import 'package:shutterstock_flutter/dal/model/response/gallery_item.dart';
+import 'package:shutterstock_flutter/dal/redux/actions/gallery.dart';
+import 'package:shutterstock_flutter/dal/redux/models/app_state.dart';
+import 'package:shutterstock_flutter/pages/gallery/view_model/base_bloc.dart';
 import 'package:redux/redux.dart';
 
 /// This class contains helper methods, listeners and variables that are

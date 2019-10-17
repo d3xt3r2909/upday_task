@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:upday_task/pages/gallery/widgets/visibility_widget.dart';
+import 'package:shutterstock_flutter/pages/gallery/widgets/visibility_widget.dart';
 
 void main() {
   group(('Test visibility of visibility widget'), () {

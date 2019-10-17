@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:upday_task/dal/model/response/gallery_item.dart';
+import 'package:shutterstock_flutter/dal/model/response/gallery_item.dart';
 
 class RequestGetGallery {
   final int page, perPage;
