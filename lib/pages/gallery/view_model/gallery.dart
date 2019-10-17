@@ -1,7 +1,10 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
+import 'package:rxdart/rxdart.dart';
+import 'package:upday_task/dal/model/response/gallery_item.dart';
 import 'package:upday_task/dal/redux/actions/gallery.dart';
 import 'package:upday_task/dal/redux/models/app_state.dart';
 import 'package:upday_task/pages/gallery/view_model/base_bloc.dart';
@@ -11,13 +14,13 @@ import 'package:redux/redux.dart';
 /// responsible for business logic of gallery page
 /// It is made because of separating UI from technical logic
 class GalleryBlock implements BaseBloc {
-  int galleryLength, _visitedIndex = 0, _pageNumber = 1;
+  int galleryLength, visitedIndex = 0, _pageNumber = 1;
   @visibleForTesting
   int currentIndex = 0;
   Store<AppState> store;
 
   // Bottom bar visibility
-  final _bbController = StreamController<bool>();
+  final _bbController = StreamController<bool>.broadcast();
 
   // region bottom bar controller & sink and stream
   StreamSink<bool> get _inBottomBarVisibility => _bbController.sink;
@@ -43,6 +46,15 @@ class GalleryBlock implements BaseBloc {
 
   Sink<ItemEvent> get itemEventSink => _itemEventController.sink;
 
+  // gallery
+  final _galleryImagesSourceController = StreamController<ItemResponse>();
+
+  StreamSink<ItemResponse> get _inGalleryImages =>
+      _galleryImagesSourceController.sink;
+
+  Stream<ItemResponse> get outGalleryImages =>
+      _galleryImagesSourceController.stream;
+
   // endregion
 
   // region error handler controller & sink & stream
@@ -53,6 +65,16 @@ class GalleryBlock implements BaseBloc {
   Stream<String> get outErrorHandler => _errorController.stream;
 
   // endregion
+
+  // Combine streams for grid widget
+  Stream<ItemResponse> get outGalleryStream => Observable.combineLatest2(
+      outItem,
+      outGalleryImages,
+      (bool e, ItemResponse p) => ItemResponse(
+            currentIndex: p.currentIndex,
+            sourceList: p.sourceList,
+            shouldShowLoadingItems: e,
+          ));
 
   // Is there need to show list witch represents loader of images
   bool get showLoaderList =>
@@ -72,65 +94,68 @@ class GalleryBlock implements BaseBloc {
     bbScrollControllerSink.close();
     _bbController.close();
     _bottomBarScrollController.close();
+    _errorController.close();
   }
 
   /// This event will control visibility of bottom bar based on
   /// [scrollDirection] or index of list
-  void _bbScrollEventToState(ScrollDirection scrollDirection) {
-    if (scrollDirection == ScrollDirection.reverse && currentIndex != 0) {
-      bbVisibilitySink.add(true);
-    } else {
-      bbVisibilitySink.add(false);
-    }
-  }
+  void _bbScrollEventToState(ScrollDirection scrollDirection) =>
+      bbVisibilitySink
+          .add(scrollDirection == ScrollDirection.reverse && currentIndex != 0);
 
   // If user has clicked on "Go to top" button, scroll needs to go on top
-  void _bbVisibilityEventToState(bool visibility) {
-    _inBottomBarVisibility.add(visibility);
-  }
+  void _bbVisibilityEventToState(bool visibility) =>
+      _inBottomBarVisibility.add(visibility);
 
   /// Based on current [event.index] this method will call external API to get
   /// more data from API service
   /// Also, on the end of method, there is condition statement which represents
   /// should we display two additional item for loading or to show real item
   /// with image in it
-  void _itemEventToState(ItemEvent event) {
-    bool isLoading = false;
+  Future<void> _itemEventToState(ItemEvent event) async {
     galleryLength = store?.state?.images?.length ?? 0;
     currentIndex = event.index;
 
-    // On every 15 element (index) of grid, call API and fill up with additional
-    // data in redux, after that build method in UI will be again rebuild
-    // because state of redux has been changed
-    if (shouldLoadNewData(event.index, isInitialLoad: event.isInitial)) {
-      isLoading = true;
+    // On every 15 element (index) of received data, call API and fill up
+    // with additional data in redux, after that build method in UI will be
+    // again rebuild because state of redux has been changed
+    if (shouldLoadNewData(event)) {
+//      print(
+//       'Load new data: on index ${event.index}; page number: $_pageNumber');
+      _inItem.add(true);
       try {
-        getData(store: store, page: _pageNumber).then((value) {
-          isLoading = false;
-        });
-
-        // If user start scrolling reverse, do not increment page number
-        if (_visitedIndex < event.index) {
-          _pageNumber++;
-        }
+        getData(
+                store: store,
+                page: _pageNumber,
+                shouldRefresh: event.isTryAgain)
+            .then((value) {
+          _inItem.add(false);
+          _inGalleryImages.add(ItemResponse(
+              sourceList: store.state.images, currentIndex: event.index));
+          // If user start scrolling reverse, do not increment page number
+          // and please do not increase number of page if user is again trying
+          // to refresh
+          if (visitedIndex <= event.index && !event.isTryAgain) {
+            _pageNumber++;
+          } else {
+            visitedIndex = event.index - 20;
+          }
+        }).catchError((e) {});
       } catch (e) {
-        print('Limit has been reached on API side, need more filters');
+        _inItem.add(false);
       }
 
-      // Save visited index into global variable
-      _visitedIndex = event.index;
+      visitedIndex = event.index;
     }
-
-    _inItem.add(isLoading && (galleryLength - event.index <= 2));
   }
 
   /// On every 14th (read from [currentIndex]) element data needs to be load
   /// Except if [isInitialLoad] is set to true - case for first items in list
   /// Except if [galleryLength] is not large enough - less than 29 elements
   @visibleForTesting
-  bool shouldLoadNewData(int currentIndex, {bool isInitialLoad = false}) =>
-      galleryLength - 1 - currentIndex == 15 && galleryLength > 29 ||
-      isInitialLoad;
+  bool shouldLoadNewData(ItemEvent event) =>
+      (galleryLength - 1 - event.index == 15 && galleryLength > 29) ||
+      (event.isInitial || event.isTryAgain);
 
   /// Method will call API point from Redux middleware for downloading data with
   /// images, where [page] represents from what point of data from DB should
@@ -141,20 +166,61 @@ class GalleryBlock implements BaseBloc {
   Future<void> getData(
       {@required Store<AppState> store,
       @required int page,
-      int perPage = 30}) async {
-    final galleryAction = RequestGetGallery(page, perPage);
-    store.dispatch(galleryAction);
+      int perPage = 30,
+      bool shouldRefresh = false}) async {
+    if (shouldRefresh) {
+      final RefreshImagesAction galleryAction =
+          RefreshImagesAction(store.state.images);
+      store.dispatch(galleryAction);
 
-    await galleryAction.completer.future.catchError((e) {
-      _inErrorHandler.add('error_code_went_wrong');
-    });
+      if (!await isInternetAvailable()) {
+        _inErrorHandler.add('error_code_went_wrong');
+        throw Error();
+      }
+    } else {
+      final RequestGetGallery galleryAction = RequestGetGallery(page, perPage);
+      store.dispatch(galleryAction);
+      await galleryAction.completer.future.catchError((e) {
+        _inErrorHandler.add('error_code_went_wrong');
+        throw e;
+      });
+    }
   }
+
+  /// Ping google domain to see is internet available
+  Future<bool> isInternetAvailable() async {
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        return true;
+      }
+    } on SocketException catch (_) {
+      _inErrorHandler.add('error_code_went_wrong');
+      return false;
+    }
+    return true;
+  }
+}
+
+class ItemResponse {
+  List<GalleryItemModel> sourceList;
+  int currentIndex;
+  bool shouldShowLoadingItems;
+
+  ItemResponse(
+      {@required this.sourceList,
+      @required this.currentIndex,
+      this.shouldShowLoadingItems = false});
 }
 
 /// Helper class for business logic layer
 class ItemEvent {
-  bool isInitial;
+  bool isInitial, isTryAgain;
   int index;
 
-  ItemEvent({@required this.index, this.isInitial = false});
+  ItemEvent({
+    @required this.index,
+    this.isInitial = false,
+    this.isTryAgain = false,
+  });
 }

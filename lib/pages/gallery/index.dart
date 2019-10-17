@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:upday_task/dal/redux/models/app_state.dart';
@@ -38,6 +39,7 @@ class _GalleryPageState extends State<GalleryPage> {
 
   @override
   Widget build(BuildContext context) => StoreConnector(
+        rebuildOnChange: false,
         onInit: (Store<AppState> store) {
           // Initialize business layer with current store
           _galleryBlock = GalleryBlock(
@@ -49,13 +51,17 @@ class _GalleryPageState extends State<GalleryPage> {
           observable.listen((something) {
             _scaffoldKey.currentState.showSnackBar(
               SnackBar(
-                content: Text('something went wrong'),
-                duration: Duration(days: 1),
+                content: Text(FlutterI18n.translate(context, 'invalid_token')),
+                duration: Duration(days: 3),
                 action: SnackBarAction(
                   label: 'TRY',
                   onPressed: () {
-                    _galleryBlock.itemEventSink
-                        .add(ItemEvent(index: 0, isInitial: true));
+                    _galleryBlock.itemEventSink.add(
+                      ItemEvent(
+                          index: _galleryBlock.visitedIndex,
+                          isInitial: true,
+                          isTryAgain: true),
+                    );
                   },
                 ),
               ),
@@ -66,22 +72,24 @@ class _GalleryPageState extends State<GalleryPage> {
           _galleryBlock.itemEventSink.add(ItemEvent(index: 0, isInitial: true));
         },
         converter: (Store<AppState> store) => store.state,
-        builder: (context, AppState model) => StreamBuilder(
-          stream: _galleryBlock.outBottomBarVisibility,
-          initialData: false,
-          builder: (BuildContext context, AsyncSnapshot<bool> showBottomBar) =>
-              Scaffold(
-            key: _scaffoldKey,
-            appBar: AppBar(
-              title: Image.asset(
-                'assets/images/shutter_stock.png',
-                height: AppDimensions.appBarSize,
-              ),
+        builder: (context, AppState model) => Scaffold(
+          key: _scaffoldKey,
+          appBar: AppBar(
+            title: Image.asset(
+              'assets/images/shutter_stock.png',
+              height: AppDimensions.appBarSize,
             ),
-            floatingActionButtonLocation:
-                FloatingActionButtonLocation.centerDocked,
-            // We can use visibility widget but it can be expensive-performance
-            floatingActionButton: VisibilityWidget(
+          ),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerDocked,
+          // We can use visibility widget but it can be expensive-performance
+          floatingActionButton: StreamBuilder(
+            stream: _galleryBlock.outBottomBarVisibility,
+            initialData: false,
+            builder:
+                (BuildContext context, AsyncSnapshot<bool> showBottomBar) =>
+                    VisibilityWidget(
+              isVisible: showBottomBar.data,
               child: FloatingActionButton(
                 key: Key('gallery_top_floating_button'),
                 backgroundColor: AppColors.primaryLight,
@@ -92,17 +100,21 @@ class _GalleryPageState extends State<GalleryPage> {
                 onPressed: () {
                   _scrollController
                       .animateTo(0,
-                      duration: Duration(milliseconds: 500),
-                      curve: Curves.easeInCubic)
+                          duration: Duration(milliseconds: 500),
+                          curve: Curves.easeInCubic)
                       .then(
-                        (value) =>
-                        _galleryBlock.bbVisibilitySink.add(false),
-                  );
+                        (value) => _galleryBlock.bbVisibilitySink.add(false),
+                      );
                 },
               ),
-              isVisible: showBottomBar.data,
             ),
-            bottomNavigationBar: VisibilityWidget(
+          ),
+          bottomNavigationBar: StreamBuilder(
+            stream: _galleryBlock.outBottomBarVisibility,
+            initialData: false,
+            builder:
+                (BuildContext context, AsyncSnapshot<bool> showBottomBar) =>
+                    VisibilityWidget(
               child: BottomAppBar(
                 shape: CircularNotchedRectangle(),
                 notchMargin: 4.0,
@@ -112,48 +124,51 @@ class _GalleryPageState extends State<GalleryPage> {
               ),
               isVisible: showBottomBar.data,
             ),
-            body: _buildBody(model),
           ),
+          body: _buildBody(model),
         ),
       );
 
   /// Build body of the page
-  Widget _buildBody(AppState state) => OrientationBuilder(
-        builder: (BuildContext context, Orientation orientation) =>
-            AnimatedSwitcher(
-          duration: const Duration(seconds: 1),
-          child: _galleryBlock.showLoaderList
-              ? GalleryShimmerList(orientation)
-              : StreamBuilder(
-                  stream: _galleryBlock.outItem,
-                  initialData: false,
-                  builder:
-                      (BuildContext context, AsyncSnapshot<bool> snapshot) =>
-                          Container(
-                    color: Theme.of(context).primaryColorLight,
-                    child: GridView.builder(
-                      controller: _scrollController,
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount:
-                            orientation == Orientation.portrait ? 2 : 3,
-                      ),
-                      key: Key('gallery_grid_key'),
-                      itemCount: state.images.length,
-                      physics: AlwaysScrollableScrollPhysics(),
-                      itemBuilder: ((BuildContext context, int index) {
-                        _galleryBlock.itemEventSink
-                            .add(ItemEvent(index: index));
+  Widget _buildBody(AppState state) => StreamBuilder(
+        stream: _galleryBlock.outItem,
+        builder: (ctx, showLoading) => StreamBuilder(
+          stream: _galleryBlock.outGalleryImages,
+          builder:
+              (BuildContext context, AsyncSnapshot<ItemResponse> snapshot) =>
+                  OrientationBuilder(
+            builder: (BuildContext context, Orientation orientation) =>
+                AnimatedSwitcher(
+              duration: const Duration(seconds: 1),
+              child: _galleryBlock.showLoaderList
+                  ? GalleryShimmerList(orientation)
+                  : Container(
+                      color: Theme.of(context).primaryColorLight,
+                      child: GridView.builder(
+                        controller: _scrollController,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount:
+                              orientation == Orientation.portrait ? 2 : 3,
+                        ),
+                        key: Key('gallery_grid_key'),
+                        itemCount: snapshot.data.sourceList.length,
+                        physics: AlwaysScrollableScrollPhysics(),
+                        itemBuilder: ((BuildContext context, int index) {
 
-                        return GalleryItemPicker(
-                            showLoadingItem: snapshot.data,
-                            imageUrl:
-                                state.images[index].assets['preview'].url);
-                      }),
+                          if(_galleryBlock.visitedIndex < index) {
+                            _galleryBlock.itemEventSink
+                                .add(ItemEvent(index: index));
+                          }
+
+                          return GalleryItemPicker(
+                              showLoadingItem: showLoading.data,
+                              imageUrl: snapshot.data.sourceList[index]
+                                  .assets['preview'].url);
+                        }),
+                      ),
                     ),
-                  ),
-                ),
+            ),
+          ),
         ),
       );
-
-
 }

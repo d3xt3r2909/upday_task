@@ -18,3 +18,9 @@ class AddImagesAction {
 
   AddImagesAction(this.images);
 }
+
+class RefreshImagesAction {
+  final List<GalleryItemModel> images;
+
+  RefreshImagesAction(this.images);
+}
