@@ -4,15 +4,16 @@
 
 *Shutterstock demo app* is application which is fetching photos from external Shutterstock API and showing them in mobile app in format of infinitive scroll grid view. User also have possibility to use "Go to top" button in case that he want to see again pictures on top of the list. This application can run on Android and iOS devices. In near future, most probably will be available for web.
 
-This app is used only for demo purpose and shows my knowledge of using flutter framework. It includes aspects of architectural ideas, testing and writing dart code.
+This app is used only for demo purpose and shows my knowledge of using flutter as a framework. It includes aspects of architectural ideas, testing and writing dart code.
 
 ## Technical aspects of project
 
 #### Tech & resources
-- Like already mentioned, this app is using [Flutter SDK](https://flutter.dev/) framework to make a build on different platforms.
+- Like already mentioned, this app is using [Flutter SDK](https://flutter.dev/) framework to make a builds on different platforms.
 - For fetching data (images), I had use this API [point](https://api-explorer.shutterstock.com/#/images/searchImages) from [Shutterstock](https://www.shutterstock.com/home)
 
 #### Code style
+
 - For correct writing of code I had used rules that are defined in analysis_options.yaml file, which are recommended from flutter and google it self https://dart.dev/guides/language/analysis-options.
 
 #### Architectural
@@ -33,15 +34,35 @@ Structure of project files are based on some kind of combination between MVVM an
 #### Dev plugins
 
 - mockito - used for mocking server response, to resolve issue with images on widget test
-- transparent_image - gives a fake images during widget testing
+- transparent_image - gives a fake/dummy image during widget testing
 - flutter_drive - needed for integration tests
 - test - needed for integration tests
 
-##### if ( Not implemented || Not tested || Can be better )
+#### if ( Not implemented || Not tested || Can be better )
 
-- I didn't test this app on tablets, iOS devices (mostly test on pixel 3 device)
+- I didn't test this app on tablets, iOS devices (mostly tested on pixel 3 device)
 - Implementation of handling errors that are coming from API point's are covered, and every error response that is retrieve from API point will show also some kind of warning to user. But my opinion that this part of project, can be better in way to show user more detailed and not so general messages
 - Golden file tests are not covered because flutter has some problem with testing of images in widget test that are downloading from internet. Of course this can be implemented, but consume more time for something that is just comparing two images. Of course, these test can be crucial in production mode
+
+#### How to test & use
+
+- To run unit test please enter this command in your terminal
+  (run widget and unit tests):
+    ```sh
+    $ flutter test
+    ```
+- To run driver tests (integration test) please enter this command:
+    ```sh
+    $ flutter driver -t test_driver/app.dart
+    ```
+- To see this application, please run command:
+    ```sh
+    $ flutter run --release
+    ```
+- Or for debug version
+    ```sh
+    $ flutter run
+    ```
 
 ## Links
 

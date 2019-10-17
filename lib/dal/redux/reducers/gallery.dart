@@ -23,12 +23,18 @@ List<GalleryItemModel> updateImagesState(
 List<GalleryItemModel> refreshImagesState(
     List<GalleryItemModel> images, RefreshImagesAction action) {
 
-  final List<GalleryItemModel> images =
-  action.images.map((image) {
-    image.assets['preview'].url = 'https://image.shutterstock.com/image-photo/image-${image.assets['preview'].width}w-${image.id}.jpg';
-    return image;
-  }).toList();
+  if (action.images != null && action.images.isNotEmpty) {
+    final List<GalleryItemModel> images =
+    action.images.map((image) {
+      image.assets['preview'].url =
+      'https://image.shutterstock.com/image-photo/image-${image
+          .assets['preview'].width}w-${image.id}.jpg';
+      return image;
+    }).toList();
 
-  return []..addAll(images);
+    return []..addAll(images);
+  } else {
+    return [];
+  }
 }
 

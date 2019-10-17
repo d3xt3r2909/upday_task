@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
@@ -69,11 +70,11 @@ class GalleryBlock implements BaseBloc {
   Stream<ItemResponse> get outGalleryStream => Observable.combineLatest2(
       outItem,
       outGalleryImages,
-          (bool e, ItemResponse p) => ItemResponse(
-        currentIndex: p.currentIndex,
-        sourceList: p.sourceList,
-        shouldShowLoadingItems: e,
-      ));
+      (bool e, ItemResponse p) => ItemResponse(
+            currentIndex: p.currentIndex,
+            sourceList: p.sourceList,
+            shouldShowLoadingItems: e,
+          ));
 
   // Is there need to show list witch represents loader of images
   bool get showLoaderList =>
@@ -112,25 +113,23 @@ class GalleryBlock implements BaseBloc {
   /// should we display two additional item for loading or to show real item
   /// with image in it
   Future<void> _itemEventToState(ItemEvent event) async {
-    bool isLoading = false;
     galleryLength = store?.state?.images?.length ?? 0;
     currentIndex = event.index;
 
-    // On every 15 element (index) of grid, call API and fill up with additional
-    // data in redux, after that build method in UI will be again rebuild
-    // because state of redux has been changed
+    // On every 15 element (index) of received data, call API and fill up
+    // with additional data in redux, after that build method in UI will be
+    // again rebuild because state of redux has been changed
     if (shouldLoadNewData(event)) {
 //      print(
-//          'Load new data: on index ${event.index}; page number: $_pageNumber');
-      isLoading = true;
-
+//       'Load new data: on index ${event.index}; page number: $_pageNumber');
+      _inItem.add(true);
       try {
         getData(
                 store: store,
                 page: _pageNumber,
                 shouldRefresh: event.isTryAgain)
             .then((value) {
-          isLoading = false;
+          _inItem.add(false);
           _inGalleryImages.add(ItemResponse(
               sourceList: store.state.images, currentIndex: event.index));
           // If user start scrolling reverse, do not increment page number
@@ -138,18 +137,16 @@ class GalleryBlock implements BaseBloc {
           // to refresh
           if (visitedIndex <= event.index && !event.isTryAgain) {
             _pageNumber++;
+          } else {
+            visitedIndex = event.index - 20;
           }
-        });
+        }).catchError((e) {});
       } catch (e) {
-        _inGalleryImages.add(ItemResponse(
-            sourceList: store.state.images, currentIndex: event.index));
+        _inItem.add(false);
       }
 
-      // Save visited index into global variable
       visitedIndex = event.index;
     }
-
-    _inItem.add(isLoading && (galleryLength - event.index <= 2));
   }
 
   /// On every 14th (read from [currentIndex]) element data needs to be load
@@ -175,6 +172,11 @@ class GalleryBlock implements BaseBloc {
       final RefreshImagesAction galleryAction =
           RefreshImagesAction(store.state.images);
       store.dispatch(galleryAction);
+
+      if (!await isInternetAvailable()) {
+        _inErrorHandler.add('error_code_went_wrong');
+        throw Error();
+      }
     } else {
       final RequestGetGallery galleryAction = RequestGetGallery(page, perPage);
       store.dispatch(galleryAction);
@@ -183,6 +185,20 @@ class GalleryBlock implements BaseBloc {
         throw e;
       });
     }
+  }
+
+  /// Ping google domain to see is internet available
+  Future<bool> isInternetAvailable() async {
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        return true;
+      }
+    } on SocketException catch (_) {
+      _inErrorHandler.add('error_code_went_wrong');
+      return false;
+    }
+    return true;
   }
 }
 
